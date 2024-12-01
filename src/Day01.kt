@@ -7,12 +7,7 @@ fun main() {
 }
 
 fun part1(input: List<String>): Int {
-    // Read input, convert to numeric format, and split into two lists.
-    val (leftInput, rightInput) =
-        input
-            .map { it.split("   ") }
-            .map { it[0].toInt() to it[1].toInt() }
-            .unzip()
+    val (leftInput, rightInput) = parseInput(input)
 
     val leftSorted = leftInput.sorted().toIntArray()
     val rightSorted = rightInput.sorted().toIntArray()
@@ -26,3 +21,10 @@ fun part2(input: List<String>): Int {
     return input.size
 }
 
+fun parseInput(input: List<String>): Pair<List<Int>, List<Int>> {
+    // Read input, convert to numeric format, and split into two lists.
+    return input
+        .map { it.split("   ") }
+        .map { it[0].toInt() to it[1].toInt() }
+        .unzip()
+}
