@@ -22,13 +22,9 @@ fun part1(input: List<String>): Int {
 fun part2(input: List<String>): Int {
     val (leftInput, rightInput) = parseInput(input)
 
-    val heatmap = mutableMapOf<Int, Int>()
+    val heatmap = rightInput.groupingBy { it }.eachCount()
 
-    rightInput.forEach {
-        heatmap[it] = heatmap.getOrDefault(it, 0) + 1
-    }
-
-    return leftInput.sumOf { it * (heatmap[it] ?: 0) }
+    return leftInput.sumOf { it * heatmap.getOrDefault(it, 0) }
 }
 
 fun parseInput(input: List<String>): Pair<List<Int>, List<Int>> {
