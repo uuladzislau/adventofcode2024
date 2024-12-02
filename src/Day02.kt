@@ -3,9 +3,9 @@ fun main() {
     fun isStable(report: List<Int>): Boolean {
         // calculate the difference (delta) of two adjacent elements
         // so [1, 3, 4, 5, 8] -> [2, 1, 1, 3]
-        val diffs = report.zipWithNext { a, b -> a - b}
+        val diffs = report.zipWithNext { a, b -> a - b }
 
-        return diffs.all { it in -3..3} && (diffs.all { it > 0 } || diffs.all { it < 0 })
+        return diffs.all { it in -3..3 } && (diffs.all { it > 0 } || diffs.all { it < 0 })
     }
 
     fun part1(input: List<String>): Int {
@@ -15,22 +15,18 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        val reports = input
+        return input
             .map { it.split(" ").map { it.toInt() } }
-
-        return reports.count { report ->
-            var safe = false
-
-            // build all possible variants of report line by removing 1 element from it
-            for (i in 0..report.lastIndex) {
-                val updatedReport = report.toMutableList().apply { removeAt(i) }
-                safe = isStable(updatedReport)
-
-                if (safe) break
+            .count { report ->
+                // build all possible variants of report line by removing 1 element from it
+                for (i in 0..report.lastIndex) {
+                    val dampened = report.toMutableList().apply { removeAt(i) }
+                    if (isStable(dampened)) {
+                        return@count true
+                    }
+                }
+                return@count false
             }
-
-            return@count safe
-        }
     }
 
     val input = readInput("Day02")
