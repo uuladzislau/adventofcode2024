@@ -15,12 +15,27 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        return input.size
+        val reports = input
+            .map { it.split(" ").map { it.toInt() } }
+
+        return reports.count { report ->
+            var safe = false
+
+            // build all possible variants of report line by removing 1 element from it
+            for (i in 0..report.lastIndex) {
+                val updatedReport = report.toMutableList().apply { removeAt(i) }
+                safe = isStable(updatedReport)
+
+                if (safe) break
+            }
+
+            return@count safe
+        }
     }
 
     val input = readInput("Day02")
 
     check(part1(input) == 383)
 
-    check(part2(input) == 1000)
+    check(part2(input) == 436)
 }
