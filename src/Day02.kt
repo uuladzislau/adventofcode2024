@@ -1,17 +1,11 @@
 fun main() {
 
     fun isStable(report: List<Int>): Boolean {
-        val increasing = report[0] < report[1];
+        // calculate the difference (delta) of two adjacent elements
+        // so [1, 3, 4, 5, 8] -> [2, 1, 1, 3]
+        val diffs = report.zipWithNext { a, b -> a - b}
 
-        for (i in 0..<report.lastIndex) {
-            val delta = report[i + 1] - report[i]
-
-            if (increasing && (delta < 1 || delta > 3)) return false
-
-            if (!increasing && (delta < -3 || delta > -1)) return false
-        }
-
-        return true
+        return diffs.all { it in -3..3} && (diffs.all { it > 0 } || diffs.all { it < 0 })
     }
 
     fun part1(input: List<String>): Int {
