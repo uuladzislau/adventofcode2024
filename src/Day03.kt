@@ -24,21 +24,6 @@ private fun part1(input: List<String>): Int {
     }
 }
 
-private interface Operation
-
-private class Do : Operation
-
-private class Dont : Operation
-
-private data class Mul(val a: Int, val b: Int) : Operation {
-    companion object {
-        fun of(s: String): Mul {
-            val (a, b) = s.drop(4).dropLast(1).split(",").map { it.toInt() }
-            return Mul(a, b)
-        }
-    }
-}
-
 private fun part2(input: List<String>): Int {
 
     val regex = Regex("(mul\\(\\d{1,3},\\d{1,3}\\)|do\\(\\)|don't\\(\\))")
@@ -57,18 +42,32 @@ private fun part2(input: List<String>): Int {
             .toList()
     }
 
-    var shouldDo = true;
-    var sum = 0;
+    var shouldMultiply = true;
 
-    for (line in mapped) {
+    return mapped.sumOf { line ->
+        var sum = 0;
         for (operation in line) {
             when (operation) {
-                is Mul -> if (shouldDo) sum += operation.a * operation.b
-                is Do -> shouldDo = true
-                is Dont -> shouldDo = false
+                is Mul -> if (shouldMultiply) sum += operation.a * operation.b
+                is Do -> shouldMultiply = true
+                is Dont -> shouldMultiply = false
             }
         }
+        sum
     }
-
-    return sum
 }
+
+private class Do : Operation
+
+private class Dont : Operation
+
+private data class Mul(val a: Int, val b: Int) : Operation {
+    companion object {
+        fun of(s: String): Mul {
+            val (a, b) = s.drop(4).dropLast(1).split(",").map { it.toInt() }
+            return Mul(a, b)
+        }
+    }
+}
+
+private interface Operation
