@@ -1,60 +1,26 @@
 fun main() {
     val input = readRawInput("Day05")
 
-    check(part1(input) == 5129)
-}
-
-private fun part1(input: String): Int {
-
     val (rawRules, rawUpdates) = input.split("\n\n")
 
-    val rules = rawRules.lines().map { it.split("|") }.map { Pair(it[0].toInt(), it[1].toInt()) }
-    val updates = rawUpdates.lines().map { line -> line.split(",").map { it.toInt() } }
+    val rules = rawRules.lines().map { it.split("|") }.groupBy({ it[0] }, { it[1] })
 
-    val rulesMap = mutableMapOf<Int, MutableSet<Int>>()
+    val updates = rawUpdates.lines().map { it.split(",") }
 
-    rules.forEach { rule ->
-        val entry = rulesMap[rule.first]
+    check(part1(rules, updates) == 5129)
+}
 
-        if (entry != null) {
-            entry.add(rule.second)
-        } else {
-            rulesMap[rule.first] = mutableSetOf(rule.second)
+fun part1(rules: Map<String, List<String>>, updates: List<List<String>>): Int {
+    return updates
+        .filter { it.allInCorrectOrder(rules) }
+        .sumOf { it[it.size / 2].toInt() }
+}
+
+private fun List<String>.allInCorrectOrder(rules: Map<String, List<String>>): Boolean {
+    val positions = mapIndexed { i, item -> item to i }.toMap()
+    return all { page ->
+        if (rules[page] == null) true else rules.getValue(page).all { rule ->
+            if (positions[rule] == null) true else positions.getValue(rule) > positions.getValue(page)
         }
-    }
-
-
-    return updates.sumOf { update ->
-        val positions = mutableMapOf<Int, Int>()
-
-        update.forEachIndexed { position, page ->
-            positions[page] = position
-        }
-
-        var correctOrder = true
-
-        println("")
-
-        update.forEachIndexed { position, page ->
-            val rulesForPage = rulesMap[page]
-
-            if (rulesForPage != null) {
-                for (r in rulesForPage) {
-                    if (positions.contains(r)) {
-                        if (positions[r]!! < position) {
-                            correctOrder = false
-                            break
-                        }
-                    }
-                }
-            }
-        }
-
-        if (correctOrder) {
-            // return middle page
-            return@sumOf update[update.size / 2]
-        }
-
-        return@sumOf 0
     }
 }
