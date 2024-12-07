@@ -1,6 +1,3 @@
-import kotlin.io.path.Path
-import kotlin.io.path.readText
-
 fun main() {
     val input = readInput("Day06")
 
