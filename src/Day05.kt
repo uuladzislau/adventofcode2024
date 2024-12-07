@@ -21,11 +21,11 @@ private fun part2(rules: Map<String, List<String>>, updates: List<List<String>>)
     return updates
         .filter { !it.allInCorrectOrder(rules) }
         .map {
-            var mutable = it
+            var reordering = it
             do {
-                mutable = mutable.order(rules)
-            } while (!mutable.allInCorrectOrder(rules))
-            mutable
+                reordering = reordering.order(rules)
+            } while (!reordering.allInCorrectOrder(rules))
+            reordering
         }
         .sumOf { it[it.size / 2].toInt() }
 }
