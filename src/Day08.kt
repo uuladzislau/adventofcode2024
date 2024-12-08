@@ -7,15 +7,15 @@ fun main() {
     AntennasMap(input).traverse().println()
 }
 
-private class AntennasMap(input: List<String>) : Iterable<Crd> {
+private class AntennasMap(input: List<String>) {
 
     private val map = mutableMapOf<Crd, Char>()
 
     private val mapStart = Crd(0, 0)
 
     private val mapEnd = Crd(
-        i = input.size - 1,
-        j = input[input.size - 1].length - 1
+        first = input.size - 1,
+        second = input[0].length - 1
     )
 
     init {
@@ -27,11 +27,14 @@ private class AntennasMap(input: List<String>) : Iterable<Crd> {
     }
 
     fun traverse(): Int {
-        forEach {
-            val el = this[it]
-            if (el.isAntenna()) {
-                // println("Antenna found at $it")
-                findAntinodes(it)
+        for (i in 0..mapEnd.first) {
+            for (j in 0..mapEnd.second) {
+                val coordinate = Crd(i, j)
+                val element = map.getValue(coordinate)
+
+                if (!element.isAntenna()) continue
+
+                findAntinodes(coordinate)
             }
         }
         println()
@@ -50,29 +53,29 @@ private class AntennasMap(input: List<String>) : Iterable<Crd> {
 
         while (keepSearching) {
             // top left corner
-            val from = Crd(max(start.i - offset, 0), max(start.j - offset, 0))
+            val from = Crd(max(start.first - offset, 0), max(start.second - offset, 0))
             // bottom right corner
-            val to = Crd(min(start.i + offset, mapEnd.i), min(start.j + offset, mapEnd.j))
+            val to = Crd(min(start.first + offset, mapEnd.second), min(start.first + offset, mapEnd.second))
 
             // println("Searching in range $from -> $to")
 
-            for (i in from.i..to.i) {
+            for (i in from.first..to.second) {
                 // println("Checking ($i, ${from.j}) --> ${get(i, from.j)}")
-                if (this[i, from.j].isAntenna(antenna)) {
-                    insertAntinode(start, Crd(i, from.j))
+                if (this[i, from.second].isAntenna(antenna)) {
+                    insertAntinode(start, Crd(i, from.second))
                 }
 
-                if (this[i, to.j].isAntenna(antenna)) {
-                    insertAntinode(start, Crd(i, to.j))
+                if (this[i, to.second].isAntenna(antenna)) {
+                    insertAntinode(start, Crd(i, to.second))
                 }
             }
 
-            for (j in from.j..to.j) {
-                if (this[from.i, j].isAntenna(antenna)) {
-                    insertAntinode(start, Crd(from.i, j))
+            for (j in from.second..to.second) {
+                if (this[from.first, j].isAntenna(antenna)) {
+                    insertAntinode(start, Crd(from.first, j))
                 }
-                if (this[to.i, j].isAntenna(antenna)) {
-                    insertAntinode(start, Crd(to.i, j))
+                if (this[to.first, j].isAntenna(antenna)) {
+                    insertAntinode(start, Crd(to.first, j))
                 }
             }
 
@@ -110,8 +113,8 @@ private class AntennasMap(input: List<String>) : Iterable<Crd> {
 
 
     private fun outOfBounds(target: Crd): Boolean =
-        (target.i < mapStart.i || target.j < mapStart.j)
-                || (mapEnd.i < target.i || mapEnd.j < target.j)
+        (target.first < mapStart.first || target.second < mapStart.second)
+                || (mapEnd.first < target.first || mapEnd.second < target.second)
 
     private fun Char.isAntenna(): Boolean = this != '.' && this != '#'
 
@@ -121,21 +124,10 @@ private class AntennasMap(input: List<String>) : Iterable<Crd> {
 
     operator fun get(x: Int, y: Int) = get(Crd(x, y))
 
-    override fun iterator(): Iterator<Crd> = traverseArea(Crd(0, 0), mapEnd)
-
-    private fun traverseArea(from: Crd, to: Crd): Iterator<Crd> = iterator {
-        for (i in from.i..to.i) {
-            for (j in from.j..to.j) {
-                yield(Crd(i, j))
-            }
-        }
-    }
-
-
     override fun toString(): String {
         return buildString {
-            for (i in mapStart.i..mapEnd.i) {
-                for (j in mapStart.j..mapEnd.j) {
+            for (i in mapStart.first..mapEnd.first) {
+                for (j in mapStart.second..mapEnd.second) {
                     append(map[Crd(i, j)])
                 }
                 append("\n")
@@ -144,11 +136,8 @@ private class AntennasMap(input: List<String>) : Iterable<Crd> {
     }
 }
 
+private typealias Crd = Pair<Int, Int>
 
-/**
- * Helper class representing a 2D point.
- */
-private data class Crd(val i: Int, val j: Int) {
-    operator fun plus(other: Crd): Crd = Crd(i = this.i + other.i, j = this.j + other.j)
-    operator fun minus(other: Crd): Crd = Crd(i = this.i - other.i, j = this.j - other.j)
-}
+private operator fun Crd.plus(other: Crd): Crd = Crd(this.first + other.first, this.second + other.second)
+private operator fun Crd.minus(other: Crd): Crd = Crd(this.first - other.first, this.second - other.second)
+
