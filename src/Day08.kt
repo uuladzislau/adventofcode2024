@@ -1,77 +1,43 @@
 fun main() {
     val input = readInput("Day08")
 
-    AntennasMap(input).traverse().println()
+    part1(input).println()
 }
 
-private class AntennasMap(input: List<String>) {
+private fun part1(input: List<String>): Int {
+    val (maxi, maxj) = input.size to input[0].length
 
-    private val map = mutableMapOf<Crd, Char>()
+    fun inBounds(target: Crd): Boolean =
+        (target.first >= 0 && target.second >= 0) && (target.first < maxi && target.second < maxj)
 
-    private val mapStart = Crd(0, 0)
+    val antennas = mutableMapOf<Char, MutableList<Crd>>()
 
-    private val mapEnd = Crd(
-        first = input.size - 1,
-        second = input[0].length - 1
-    )
+    val distinctLocations = mutableSetOf<Crd>()
 
-    init {
-        for (i in input.indices) {
-            for (j in input[i].indices) {
-                map[Crd(i, j)] = input[i][j]
+    for (i in 0..<maxi) {
+        for (j in 0..<maxj) {
+            if (input[i][j] == '.') continue
+
+            val current = input[i][j]
+
+            val currentLoc = Crd(i, j)
+
+            antennas[current]?.forEach { otherLoc ->
+                // otherLoc - location of another previously discovered antenna of the same type
+                val distance = currentLoc - otherLoc
+
+                val (antinodeA, antinodeB) = (currentLoc + distance) to (otherLoc - distance)
+
+                if (inBounds(antinodeA)) distinctLocations.add(antinodeA)
+
+                if (inBounds(antinodeB)) distinctLocations.add(antinodeB)
             }
+
+            antennas.computeIfAbsent(current) { mutableListOf() }.add(currentLoc)
         }
     }
 
-    fun traverse(): Int {
-        val antennas = mutableMapOf<Char, MutableList<Crd>>()
-
-        val distinctLocations = mutableSetOf<Crd>()
-
-        for (i in 0..mapEnd.first) {
-            for (j in 0..mapEnd.second) {
-                val current = Crd(i, j)
-                val element = map.getValue(current)
-
-                if (!element.isAntenna()) continue
-
-                antennas[element]?.forEach { other ->
-                    val distance = current - other
-
-                    val (antinodeA, antinodeB) = (current + distance) to (other - distance)
-
-                    if (!outOfBounds(antinodeA)) {
-                        distinctLocations.add(antinodeA)
-                    }
-
-                    if (!outOfBounds(antinodeB)) {
-                        distinctLocations.add(antinodeB)
-                    }
-                }
-
-                antennas.computeIfAbsent(element) { mutableListOf() }.add(current)
-            }
-        }
-
-        return distinctLocations.size
-    }
-
-    private fun outOfBounds(target: Crd): Boolean =
-        (target.first < mapStart.first || target.second < mapStart.second)
-                || (mapEnd.first < target.first || mapEnd.second < target.second)
-
-    private fun Char.isAntenna(): Boolean = this != '.' && this != '#'
-
-    override fun toString(): String {
-        return buildString {
-            for (i in mapStart.first..mapEnd.first) {
-                for (j in mapStart.second..mapEnd.second) {
-                    append(map[Crd(i, j)])
-                }
-                append("\n")
-            }
-        }
-    }
+    return distinctLocations.size
 }
 
 private typealias Crd = Pair<Int, Int>
