@@ -1,33 +1,33 @@
 fun main() {
-    val testInput = readInput("Day11_test").first().split(" ")
+    val testInput = "125 17".split(" ")
     val input = readInput("Day11").first().split(" ")
 
-    check(part1(testInput) == 55312)
-    check(part1(input) == 218956)
+    check(observe(testInput, 25) == 55312L)
 
-    check(part2(input) == 259593838049805)
+    check(observe(input, 25) == 218956L)
+    check(observe(input, 75) == 259593838049805)
 }
 
-private fun part1(input: List<String>): Int {
-    var afterObservation = input
+private fun observe(stones: List<String>, blinks: Int): Long {
 
-    repeat(25) {
-        afterObservation = observe(afterObservation)
-    }
+    val cache = mutableMapOf<Pair<String, Int>, Long>()
 
-    return afterObservation.size
-}
+    val leadingZeroes = """^0+""".toRegex()
 
-val leadingZeroes = """^0+""".toRegex()
+    fun observe(stone: String, blinks: Int = 0, max: Int): Long {
+        if (blinks == max) return 1
 
-private fun observe(stones: List<String>): List<String> = buildList {
-    stones.forEach { stone ->
-        if (stone == "0") {
-            add("1")
-            return@forEach
+        val key = stone to blinks
+
+        if (cache.contains(key)) {
+            return cache.getValue(key)
         }
 
-        if (stone.length % 2 == 0) {
+        val localResult: Long
+
+        if (stone == "0") {
+            localResult = observe("1", blinks + 1, max)
+        } else if (stone.length % 2 == 0) {
             val middle = stone.length / 2
 
             val first = stone.substring(0 until middle)
@@ -37,51 +37,14 @@ private fun observe(stones: List<String>): List<String> = buildList {
                 second = "0"
             }
 
-            add(first)
-            add(second)
-
-            return@forEach
+            localResult = observe(first, blinks + 1, max) + observe(second, blinks + 1, max)
+        } else {
+            localResult = observe("${stone.toLong() * 2024}", blinks + 1, max)
         }
 
-        add("${stone.toLong() * 2024}")
-    }
-}
-
-private fun part2(input: List<String>) = input.map(::foo).sum()
-
-private val cache = mutableMapOf<Pair<String, Int>, Long>()
-
-private fun foo(stone: String, level: Int = 0): Long {
-    if (level == 75) return 1
-
-    val key = stone to level
-
-    if (cache.contains(key)) {
-        return cache.getValue(key)
-    }
-
-    if (stone == "0") {
-        val localResult = foo("1", level + 1)
         cache[key] = localResult
         return localResult
     }
 
-    if (stone.length % 2 == 0) {
-        val middle = stone.length / 2
-
-        val first = stone.substring(0 until middle)
-        var second = stone.substring(middle until stone.length).replace(leadingZeroes, "")
-
-        if (second == "") {
-            second = "0"
-        }
-
-        val localResult = foo(first, level + 1) + foo(second, level + 1)
-        cache[key] = localResult
-        return localResult
-    }
-
-    val localResult = foo("${stone.toLong() * 2024}", level + 1)
-    cache[key] = localResult
-    return localResult
+    return stones.sumOf { observe(it, 0, blinks) }
 }
