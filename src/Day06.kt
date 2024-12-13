@@ -6,8 +6,8 @@ fun main() {
 
 private class Map(input: List<String>) {
 
-    private var map = mutableMapOf<Pair<Int, Int>, Char>()
-    private var currentPos = Pair(-1, -1)
+    private var map = mutableMapOf<Coordinate, Char>()
+    private var currentPos = Coordinate(-1, -1)
     private var direction = Direction.UP
 
     private val boundaries = Pair(
@@ -20,22 +20,22 @@ private class Map(input: List<String>) {
     init {
         for (i in input.indices) {
             for (j in input[i].indices) {
-                map[Pair(i, j)] = input[i][j]
+                map[i to j] = input[i][j]
 
                 if (input[i][j] == '^') {
-                    currentPos = Pair(i, j)
+                    currentPos = i to j
                 }
             }
         }
 
-        assert(currentPos == Pair(-1, -1), { "Start not found" })
+        assert(currentPos == -1 to -1, { "Start not found" })
     }
 
-    private enum class Direction(val offset: Pair<Int, Int>) {
-        UP(Pair(-1, 0)),
-        DOWN(Pair(1, 0)),
-        LEFT(Pair(0, -1)),
-        RIGHT(Pair(0, 1)),
+    private enum class Direction(val offset: Coordinate) {
+        UP(-1 to 0),
+        DOWN(1 to 0),
+        LEFT(0 to -1),
+        RIGHT(0 to 1),
     }
 
     fun traverse(): Int {
@@ -67,17 +67,17 @@ private class Map(input: List<String>) {
         return true
     }
 
-    private fun getNextPos(): Pair<Int, Int> = Pair(
+    private fun getNextPos() = Coordinate(
         first = currentPos.first + direction.offset.first,
         second = currentPos.second + direction.offset.second
     )
 
-    private fun isOutOfBounds(pos: Pair<Int, Int>): Boolean {
+    private fun isOutOfBounds(pos: Coordinate): Boolean {
         return (pos.first < 0 || pos.second < 0)
                 || (boundaries.first < pos.first || boundaries.second < pos.second)
     }
 
-    private fun moveTo(pos: Pair<Int, Int>) {
+    private fun moveTo(pos: Coordinate) {
         map[currentPos] = 'X'
         if (map[pos] == '.') visited++
         currentPos = pos
@@ -96,7 +96,7 @@ private class Map(input: List<String>) {
     fun printMap() {
         for (i in 0..boundaries.first) {
             for (j in 0..boundaries.second) {
-                print(map[Pair(i, j)])
+                print(map[Coordinate(i, j)])
             }
             print("\n")
         }

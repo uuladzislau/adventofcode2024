@@ -59,8 +59,6 @@ private fun Grid.withinBoundaries(c: Coordinate): Boolean =
 
 private operator fun Grid.get(c: Coordinate): Char = this[c.first][c.second]
 
-private typealias Coordinate = Pair<Int, Int>
-
 private operator fun Coordinate.plus(other: Coordinate) =
     Coordinate(this.first + other.first, this.second + other.second)
 

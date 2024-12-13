@@ -8,12 +8,12 @@ fun main() {
 private fun part1(input: List<String>): Int {
     val (maxi, maxj) = input.size to input[0].length
 
-    fun inBounds(target: Crd): Boolean =
+    fun inBounds(target: Coordinate): Boolean =
         (target.first >= 0 && target.second >= 0) && (target.first < maxi && target.second < maxj)
 
-    val antennas = mutableMapOf<Char, MutableList<Crd>>()
+    val antennas = mutableMapOf<Char, MutableList<Coordinate>>()
 
-    val distinctLocations = mutableSetOf<Crd>()
+    val distinctLocations = mutableSetOf<Coordinate>()
 
     for (i in 0..<maxi) {
         for (j in 0..<maxj) {
@@ -21,7 +21,7 @@ private fun part1(input: List<String>): Int {
 
             val current = input[i][j]
 
-            val currentLoc = Crd(i, j)
+            val currentLoc = Coordinate(i, j)
 
             antennas[current]?.forEach { otherLoc ->
                 // otherLoc - location of another previously discovered antenna of the same type
@@ -44,12 +44,12 @@ private fun part1(input: List<String>): Int {
 private fun part2(input: List<String>): Int {
     val (maxi, maxj) = input.size to input[0].length
 
-    fun inBounds(target: Crd): Boolean =
+    fun inBounds(target: Coordinate): Boolean =
         (target.first >= 0 && target.second >= 0) && (target.first < maxi && target.second < maxj)
 
-    val antennas = mutableMapOf<Char, MutableList<Crd>>()
+    val antennas = mutableMapOf<Char, MutableList<Coordinate>>()
 
-    val distinctLocations = mutableSetOf<Crd>()
+    val distinctLocations = mutableSetOf<Coordinate>()
 
     for (i in 0..<maxi) {
         for (j in 0..<maxj) {
@@ -57,7 +57,7 @@ private fun part2(input: List<String>): Int {
 
             val current = input[i][j]
 
-            val currentLoc = Crd(i, j)
+            val currentLoc = Coordinate(i, j)
 
             antennas[current]?.forEach { otherLoc ->
                 // otherLoc - location of another previously discovered antenna of the same type
@@ -86,8 +86,6 @@ private fun part2(input: List<String>): Int {
     return distinctLocations.size
 }
 
-private typealias Crd = Pair<Int, Int>
+private operator fun Coordinate.plus(other: Coordinate): Coordinate = Coordinate(this.first + other.first, this.second + other.second)
 
-private operator fun Crd.plus(other: Crd): Crd = Crd(this.first + other.first, this.second + other.second)
-
-private operator fun Crd.minus(other: Crd): Crd = Crd(this.first - other.first, this.second - other.second)
+private operator fun Coordinate.minus(other: Coordinate): Coordinate = Coordinate(this.first - other.first, this.second - other.second)
