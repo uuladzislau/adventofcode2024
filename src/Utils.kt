@@ -26,3 +26,14 @@ fun Any?.println() = println(this)
  * Utility type representing a 2D point on a grid.
  */
 typealias Coordinate = Pair<Int, Int>
+
+operator fun Coordinate.plus(other: Coordinate) = Coordinate(this.first + other.first, this.second + other.second)
+
+operator fun Coordinate.minus(other: Coordinate) = Coordinate(this.first - other.first, this.second - other.second)
+
+/**
+ * Utility type representing a 2D grid.
+ */
+typealias Grid = List<String>
+
+operator fun Grid.get(c: Coordinate): Char = this[c.first][c.second]

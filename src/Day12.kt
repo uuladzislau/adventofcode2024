@@ -52,15 +52,5 @@ private val directions = setOf<Coordinate>(
     Coordinate(0, 1),   // Right
 )
 
-private typealias Grid = List<String>
-
 private fun Grid.withinBoundaries(c: Coordinate): Boolean =
     (c.first >= 0 && c.second >= 0) && (c.first < this.size && c.second < this[0].length)
-
-private operator fun Grid.get(c: Coordinate): Char = this[c.first][c.second]
-
-private operator fun Coordinate.plus(other: Coordinate) =
-    Coordinate(this.first + other.first, this.second + other.second)
-
-private operator fun Coordinate.minus(other: Coordinate) =
-    Coordinate(this.first - other.first, this.second - other.second)

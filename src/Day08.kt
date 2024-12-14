@@ -85,7 +85,3 @@ private fun part2(input: List<String>): Int {
 
     return distinctLocations.size
 }
-
-private operator fun Coordinate.plus(other: Coordinate): Coordinate = Coordinate(this.first + other.first, this.second + other.second)
-
-private operator fun Coordinate.minus(other: Coordinate): Coordinate = Coordinate(this.first - other.first, this.second - other.second)
