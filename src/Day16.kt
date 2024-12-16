@@ -2,32 +2,37 @@ fun main() {
     val testInput = readInput("Day16_test")
     val input = readInput("Day16")
 
-    part1(testInput)
-//    part1(input)
+    check(part1(testInput) == 11048)
+
+    part1(input)
+
+    // 98356 is too high
 }
+
+private data class Context(val direction: Coordinate, val visited: Set<Coordinate>, val scores: List<Int>)
 
 private fun part1(maze: Grid): Int {
     val start: Coordinate = maze.find('S')
 
-    val deadEnds = mutableSetOf<Coordinate>()
+    val visiting = mutableListOf<Pair<Coordinate, Context>>()
+
     val visited = mutableSetOf<Coordinate>()
 
-    val visiting = mutableListOf<Triple<Coordinate, Coordinate, Int>>()
-
-    visiting.add(Triple(start, (0 to 1), 0))
+    visiting.add(start to Context((0 to 1), emptySet(), emptyList()))
 
     val solutions = mutableListOf<Int>()
 
+    // printMaze(maze, emptySet())
+
     while (visiting.isNotEmpty()) {
-        val (loc, prevDirection, score) = visiting.removeFirst()
+        val (loc, prev) = visiting.removeFirst()
 
-        println("current score: $score")
-        printMaze(maze, loc)
-
-//        println("visiting: $loc")
+        if (loc in visited) {
+            continue
+        }
 
         if (maze[loc] == 'E') {
-            solutions.add(score)
+            solutions.add(prev.scores.sum())
             continue
         }
 
@@ -35,36 +40,36 @@ private fun part1(maze: Grid): Int {
             continue
         }
 
-        if (visited.contains(loc)) {
-            continue
-        }
-
         val moves = arrayOf(
-            plus90(prevDirection) to 1000,
-            prevDirection to 1,
-            minus90(prevDirection) to 1000,
+            prev.direction.plus90() to 1001,
+            prev.direction to 1,
+            prev.direction.minus90() to 1001,
         )
 
         for ((direction, price) in moves) {
-            if (maze[loc + direction] == '#') continue
+            val destination = loc + direction
 
-            visiting.add(Triple(loc + direction, direction, score + price))
+            if (maze[destination] == '#') continue
+
+            val context = Context(direction, prev.visited + loc, prev.scores + price)
+
+            visiting.add(destination to context)
         }
 
         visited.add(loc)
     }
 
-    println("solutions: $solutions")
+    println("solutions: ${solutions.min()}")
 
-    return 0
+    return solutions.min()
 }
 
-private fun printMaze(maze:Grid, loc: Coordinate) {
+private fun printMaze(maze: Grid, visited: Set<Coordinate>) {
     println(
         buildString {
             for (i in maze.indices) {
                 for (j in maze[i].indices) {
-                    if (loc == i to j) {
+                    if (i to j in visited) {
                         append('@')
                     } else {
                         append(maze[i to j])
@@ -87,21 +92,12 @@ private fun Grid.find(c: Char): Coordinate {
     throw IllegalStateException("Can't find '$c' :(")
 }
 
-private val directions = listOf(
-    (0 to 1),  // EAST
-    (1 to 0),  // SOUTH
-    (0 to -1), // WEST
-    (-1 to 0), // NORTH
-)
-
-private fun plus90(c: Coordinate): Coordinate {
-    val direction = directions.indexOf(c)
-
-    return directions[Math.floorMod(direction + 1, directions.size)]
+private fun Coordinate.plus90(): Coordinate = when (this) {
+    0 to 1 -> 1 to 0
+    1 to 0 -> 0 to -1
+    0 to -1 -> -1 to 0
+    -1 to 0 -> 0 to 1
+    else -> error("Can't figure out how to turn :(")
 }
 
-private fun minus90(c: Coordinate): Coordinate {
-    val direction = directions.indexOf(c)
-
-    return directions[Math.floorMod(direction - 1, directions.size)]
-}
+private fun Coordinate.minus90(): Coordinate = plus90().plus90().plus90()
