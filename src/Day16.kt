@@ -3,82 +3,43 @@ fun main() {
     val input = readInput("Day16")
 
     check(part1(testInput) == 11048)
-
-    part1(input)
-
-    // 98356 is too high
+    check(part1(input) == 72428)
 }
-
-private data class Context(val direction: Coordinate, val visited: Set<Coordinate>, val scores: List<Int>)
 
 private fun part1(maze: Grid): Int {
     val start: Coordinate = maze.find('S')
+    val end: Coordinate = maze.find('E')
 
-    val visiting = mutableListOf<Pair<Coordinate, Context>>()
+    val visiting = mutableListOf<Triple<Coordinate, Coordinate, Int>>()
 
-    val visited = mutableSetOf<Coordinate>()
+    val visited = mutableSetOf<Pair<Coordinate, Coordinate>>() // storing pairs of location + direction
 
-    visiting.add(start to Context((0 to 1), emptySet(), emptyList()))
-
-    val solutions = mutableListOf<Int>()
-
-    // printMaze(maze, emptySet())
+    visiting.add(
+        Triple(start, (0 to 1), 0)
+    )
 
     while (visiting.isNotEmpty()) {
-        val (loc, prev) = visiting.removeFirst()
+        visiting.sortBy { it.third } // always prefer nodes with lower score, like in Dijkstra's
 
-        if (loc in visited) {
-            continue
+        val (loc, direction, score) = visiting.removeFirst()
+
+        if (loc == end) return score
+
+        if (loc to direction in visited) continue
+
+        visited += loc to direction
+
+        val nextLoc = loc + direction
+
+        if (maze[nextLoc] != '#') {
+            visiting += Triple(nextLoc, direction, score + 1)
         }
 
-        if (maze[loc] == 'E') {
-            solutions.add(prev.scores.sum())
-            continue
-        }
-
-        if (maze[loc] == '#') {
-            continue
-        }
-
-        val moves = arrayOf(
-            prev.direction.plus90() to 1001,
-            prev.direction to 1,
-            prev.direction.minus90() to 1001,
-        )
-
-        for ((direction, price) in moves) {
-            val destination = loc + direction
-
-            if (maze[destination] == '#') continue
-
-            val context = Context(direction, prev.visited + loc, prev.scores + price)
-
-            visiting.add(destination to context)
-        }
-
-        visited.add(loc)
+        visiting += Triple(loc, direction.plus90(), score + 1000)
+        visiting += Triple(loc, direction.minus90(), score + 1000)
     }
 
-    println("solutions: ${solutions.min()}")
-
-    return solutions.min()
-}
-
-private fun printMaze(maze: Grid, visited: Set<Coordinate>) {
-    println(
-        buildString {
-            for (i in maze.indices) {
-                for (j in maze[i].indices) {
-                    if (i to j in visited) {
-                        append('@')
-                    } else {
-                        append(maze[i to j])
-                    }
-                }
-                append('\n')
-            }
-        }
-    )
+    return -1
 }
 
 private fun Grid.find(c: Char): Coordinate {
