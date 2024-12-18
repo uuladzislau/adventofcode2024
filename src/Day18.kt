@@ -4,6 +4,9 @@ fun main() {
 
     check(part1(testInput, 6, 12) == 22)
     check(part1(input, 70, 1024) == 314)
+
+    check(part2(testInput, 6, 12) == "6,1")
+    check(part2(input, 70, 1024) == "15,20")
 }
 
 private fun part1(input: List<String>, area: Int, wait: Int): Int {
@@ -49,7 +52,16 @@ private fun part1(input: List<String>, area: Int, wait: Int): Int {
         visiting += Triple(loc, direction.plus90().plus90().plus90(), score)
     }
 
-    return -1
+    error("Solution not found :(")
+}
+
+private fun part2(input: List<String>, area: Int, from: Int): String {
+    for (byteIndex in from until input.size) {
+        if (part1(input, area, byteIndex) == -1) {
+            return input[byteIndex - 1]
+        }
+    }
+    error("Solution not found :(")
 }
 
 private fun buildMap(corrupted: Set<Coordinate>, area: Int): Grid = (0..area).map { i ->
