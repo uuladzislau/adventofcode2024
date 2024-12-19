@@ -47,12 +47,11 @@ private fun part1(input: List<String>, area: Int, wait: Int): Int {
             visiting += Triple(nextLoc, direction, score + 1)
         }
 
-        visiting += Triple(loc, direction.plus90(), score)
-        visiting += Triple(loc, direction.plus90().plus90(), score)
-        visiting += Triple(loc, direction.plus90().plus90().plus90(), score)
+        visiting += Triple(loc, direction.plus90(), score)                      // check right
+        visiting += Triple(loc, direction.plus90().plus90().plus90(), score)    // check left
     }
 
-    error("Solution not found :(")
+    return -1
 }
 
 private fun part2(input: List<String>, area: Int, from: Int): String {
@@ -69,10 +68,6 @@ private fun buildMap(corrupted: Set<Coordinate>, area: Int): Grid = (0..area).ma
         .map { j -> if (i to j in corrupted) '#' else '.' }
         .joinToString("")
 }
-
-private fun Coordinate.within(map: Grid): Boolean =
-    (this.first >= 0 && this.second >= 0) &&
-            (this.first < map.size && this.second < map.size)
 
 private fun Coordinate.plus90(): Coordinate = when (this) {
     0 to 1 -> 1 to 0

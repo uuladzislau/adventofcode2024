@@ -26,7 +26,7 @@ private fun part1(gardenPlot: Grid): Int {
                     toVisit +=
                         directions
                             .map { it + current }
-                            .filter { gardenPlot.withinBoundaries(it) && (it !in regions) && (it !in toVisit) }
+                            .filter { it.within(gardenPlot) && (it !in regions) && (it !in toVisit) }
                 }
             }
         }
@@ -45,12 +45,9 @@ private fun part1(gardenPlot: Grid): Int {
     }
 }
 
-private val directions = setOf<Coordinate>(
+private val directions = setOf(
     Coordinate(-1, 0),  // Up
     Coordinate(1, 0),   // Down
     Coordinate(0, -1),  // Left
     Coordinate(0, 1),   // Right
 )
-
-private fun Grid.withinBoundaries(c: Coordinate): Boolean =
-    (c.first >= 0 && c.second >= 0) && (c.first < this.size && c.second < this[0].length)

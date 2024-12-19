@@ -27,6 +27,9 @@ fun Any?.println() = println(this)
  */
 typealias Coordinate = Pair<Int, Int>
 
+fun Coordinate.within(grid: Grid): Boolean =
+    (this.first >= 0 && this.second >= 0) && (this.first < grid.size && this.second < grid[0].length)
+
 operator fun Coordinate.plus(other: Coordinate) = Coordinate(this.first + other.first, this.second + other.second)
 
 operator fun Coordinate.minus(other: Coordinate) = Coordinate(this.first - other.first, this.second - other.second)
