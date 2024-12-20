@@ -10,12 +10,12 @@ private fun part1(maze: Grid): Int {
     val start: Coordinate = maze.find('S')
     val end: Coordinate = maze.find('E')
 
-    val visiting = mutableListOf<Triple<Coordinate, Coordinate, Int>>()
+    val visiting = mutableListOf<Triple<Coordinate, Direction, Int>>()
 
-    val visited = mutableSetOf<Pair<Coordinate, Coordinate>>() // storing pairs of location + direction
+    val visited = mutableSetOf<Pair<Coordinate, Direction>>() // storing pairs of location + direction
 
     visiting.add(
-        Triple(start, (0 to 1), 0)
+        Triple(start, Direction.LEFT, 0)
     )
 
     while (visiting.isNotEmpty()) {
@@ -29,7 +29,7 @@ private fun part1(maze: Grid): Int {
 
         visited += loc to direction
 
-        val nextLoc = loc + direction
+        val nextLoc = loc + direction.offset
 
         if (maze[nextLoc] != '#') {
             visiting += Triple(nextLoc, direction, score + 1)
@@ -52,13 +52,3 @@ private fun Grid.find(c: Char): Coordinate {
     }
     throw IllegalStateException("Can't find '$c' :(")
 }
-
-private fun Coordinate.plus90(): Coordinate = when (this) {
-    0 to 1 -> 1 to 0
-    1 to 0 -> 0 to -1
-    0 to -1 -> -1 to 0
-    -1 to 0 -> 0 to 1
-    else -> error("Can't figure out how to turn :(")
-}
-
-private fun Coordinate.minus90(): Coordinate = plus90().plus90().plus90()

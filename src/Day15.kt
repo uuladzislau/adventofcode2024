@@ -64,7 +64,7 @@ private fun parseInput(fileName: String, widthDoubled: Boolean = false): Warehou
                     '>' -> Coordinate(0, 1)
                     '^' -> Coordinate(-1, 0)
                     'v' -> Coordinate(1, 0)
-                    else -> throw IllegalStateException("Unexpected token $token")
+                    else -> error("Unexpected token $token")
                 }
             }
         }

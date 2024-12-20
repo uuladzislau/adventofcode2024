@@ -40,3 +40,19 @@ operator fun Coordinate.minus(other: Coordinate) = Coordinate(this.first - other
 typealias Grid = List<String>
 
 operator fun Grid.get(c: Coordinate): Char = this[c.first][c.second]
+
+enum class Direction(val offset: Coordinate) {
+    UP(-1 to 0),
+    DOWN(1 to 0),
+    LEFT(0 to -1),
+    RIGHT(0 to 1);
+
+    fun plus90(): Direction = when (this) {
+        RIGHT -> DOWN
+        DOWN -> LEFT
+        LEFT -> UP
+        UP -> RIGHT
+    }
+
+    fun minus90(): Direction = plus90().plus90().plus90()
+}

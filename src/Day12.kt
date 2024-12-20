@@ -24,8 +24,8 @@ private fun part1(gardenPlot: Grid): Int {
                     regions[current] = regionId
 
                     toVisit +=
-                        directions
-                            .map { it + current }
+                        Direction.entries
+                            .map { current + it.offset  }
                             .filter { it.within(gardenPlot) && (it !in regions) && (it !in toVisit) }
                 }
             }
@@ -37,17 +37,10 @@ private fun part1(gardenPlot: Grid): Int {
         val area = coordinates.size
 
         val perimeter = coordinates.sumOf { coordinate ->
-            val neighboursCount = directions.map { it + coordinate }.count { it in coordinates }
+            val neighboursCount = Direction.entries.map { it.offset + coordinate }.count { it in coordinates }
             4 - neighboursCount
         }
 
         area * perimeter
     }
 }
-
-private val directions = setOf(
-    Coordinate(-1, 0),  // Up
-    Coordinate(1, 0),   // Down
-    Coordinate(0, -1),  // Left
-    Coordinate(0, 1),   // Right
-)
