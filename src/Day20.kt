@@ -1,51 +1,64 @@
+import kotlin.math.abs
+
 fun main() {
     val testInput = readInput("Day20_test")
     val input = readInput("Day20")
 
-    part1(testInput).println()
+    check(part1(input) == 1490)
 }
 
 private fun part1(map: Grid): Int {
     val start = map.find('S')
     val end = map.find('E')
 
-    findPath(map, start, end).println()
+    val path = findPath(map, start, end)
 
-    return 0
-}
+    var count = 0
 
-private fun findPath(map: Grid, start: Coordinate, end: Coordinate): Int {
-    data class State(
-        val loc: Coordinate,
-        val score: Int,
-        val cheated: Boolean
-    )
+    for (i in 0..<path.lastIndex - 1) {
+        for (j in i + 1..<path.size) {
+            val c1 = path[i]
+            val c2 = path[j]
+            val distance = manhattanDistance(c1, c2)
 
-    val visiting = mutableListOf<State>()
 
-    val visited = mutableSetOf<Pair<Coordinate, Direction>>() // storing pairs of location + direction
-
-    visiting.add(
-        State(start, 0, false)
-    )
-
-    while (visiting.isNotEmpty()) {
-        val (loc, score) = visiting.removeFirst()
-
-        if (loc == end) return score
-
-        for (direction in Direction.entries) {
-            if (loc to direction in visited) continue
-
-            visited += loc to direction
-
-            val nextLoc = loc + direction.offset
-
-            if (map[nextLoc] != '#') {
-                visiting += State(nextLoc, score + 1, false)
+            if (distance <= 2 && j - i - distance >= 100) {
+                count++
             }
         }
     }
 
-    error("Can't solve :(")
+    return count
 }
+
+private fun findPath(map: Grid, start: Coordinate, end: Coordinate): List<Coordinate> {
+
+    val visiting = mutableListOf<Coordinate>()
+
+    val visited = mutableSetOf<Coordinate>()
+
+    visiting += start
+
+    while (visiting.isNotEmpty()) {
+        val loc = visiting.removeFirst()
+
+        if (loc == end) return visited.toList()
+
+        if (loc in visited) continue
+
+        visited += loc
+
+        for (direction in Direction.entries) {
+            val nextLoc = loc + direction.offset
+
+            if (nextLoc.within(map) && nextLoc !in visited && map[nextLoc] != '#') {
+                visiting += nextLoc
+            }
+        }
+    }
+
+    error("Solution not found :(")
+}
+
+private fun manhattanDistance(c1: Coordinate, c2: Coordinate): Int =
+    abs(c1.first - c2.first) + abs(c1.second - c2.second)
