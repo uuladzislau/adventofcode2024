@@ -6,7 +6,7 @@ fun main() {
     // Part 1
     check(solve(map = input, cheatDuration =  2) == 1490)
     // Part 2
-    solve(map = input, cheatDuration = 20).println()
+    check(solve(map = input, cheatDuration = 20) == 1011325)
 }
 
 private fun solve(map: Grid, cheatDuration: Int): Int {
@@ -34,30 +34,26 @@ private fun solve(map: Grid, cheatDuration: Int): Int {
 }
 
 private fun findPath(map: Grid, start: Coordinate, end: Coordinate): List<Coordinate> {
+    var loc = start
 
-    val visiting = mutableListOf<Coordinate>()
+    val path = mutableListOf(loc)
 
     val visited = mutableSetOf<Coordinate>()
 
-    visiting += start
-
-    while (visiting.isNotEmpty()) {
-        val loc = visiting.removeFirst()
-
-        if (loc == end) return visited.toList()
-
+    while (loc != end) {
         visited += loc
 
-        for (direction in Direction.entries) {
-            val nextLoc = loc + direction.offset
-
-            if (nextLoc !in visited && map[nextLoc] != '#') {
-                visiting += nextLoc
-            }
+        val direction = Direction.entries.first {
+            val nextLoc = loc + it.offset
+            nextLoc !in visited && map[nextLoc] != '#'
         }
+
+        loc += direction.offset
+
+        path += loc
     }
 
-    error("Solution not found :(")
+    return path
 }
 
 private fun manhattanDistance(c1: Coordinate, c2: Coordinate): Int =
