@@ -41,6 +41,17 @@ typealias Grid = List<String>
 
 operator fun Grid.get(c: Coordinate): Char = this[c.first][c.second]
 
+fun Grid.find(c: Char): Coordinate {
+    for (i in indices) {
+        for (j in this[i].indices) {
+            if (this[i][j] == c) {
+                return i to j
+            }
+        }
+    }
+    throw IllegalStateException("Can't find '$c' :(")
+}
+
 enum class Direction(val offset: Coordinate) {
     UP(-1 to 0),
     DOWN(1 to 0),

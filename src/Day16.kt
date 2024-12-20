@@ -41,14 +41,3 @@ private fun part1(maze: Grid): Int {
 
     return -1
 }
-
-private fun Grid.find(c: Char): Coordinate {
-    for (i in indices) {
-        for (j in this[i].indices) {
-            if (this[i][j] == c) {
-                return i to j
-            }
-        }
-    }
-    throw IllegalStateException("Can't find '$c' :(")
-}
