@@ -44,14 +44,12 @@ private fun findPath(map: Grid, start: Coordinate, end: Coordinate): List<Coordi
 
         if (loc == end) return visited.toList()
 
-        if (loc in visited) continue
-
         visited += loc
 
         for (direction in Direction.entries) {
             val nextLoc = loc + direction.offset
 
-            if (nextLoc.within(map) && nextLoc !in visited && map[nextLoc] != '#') {
+            if (nextLoc !in visited && map[nextLoc] != '#') {
                 visiting += nextLoc
             }
         }
