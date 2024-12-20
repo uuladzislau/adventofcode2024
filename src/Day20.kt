@@ -16,8 +16,7 @@ private fun part1(map: Grid): Int {
 
 private fun findPath(map: Grid, start: Coordinate, end: Coordinate): Int {
     data class State(
-        val from: Coordinate,
-        val direction: Direction,
+        val loc: Coordinate,
         val score: Int,
         val cheated: Boolean
     )
@@ -27,26 +26,25 @@ private fun findPath(map: Grid, start: Coordinate, end: Coordinate): Int {
     val visited = mutableSetOf<Pair<Coordinate, Direction>>() // storing pairs of location + direction
 
     visiting.add(
-        State(start, Direction.LEFT, 0, false)
+        State(start, 0, false)
     )
 
     while (visiting.isNotEmpty()) {
-        val (loc, direction, score) = visiting.removeFirst()
+        val (loc, score) = visiting.removeFirst()
 
         if (loc == end) return score
 
-        if (loc to direction in visited) continue
+        for (direction in Direction.entries) {
+            if (loc to direction in visited) continue
 
-        visited += loc to direction
+            visited += loc to direction
 
-        val nextLoc = loc + direction.offset
+            val nextLoc = loc + direction.offset
 
-        if (map[nextLoc] != '#') {
-            visiting += State(nextLoc, direction, score + 1, false)
+            if (map[nextLoc] != '#') {
+                visiting += State(nextLoc, score + 1, false)
+            }
         }
-
-        visiting += State(loc, direction.plus90(), score, false)
-        visiting += State(loc, direction.minus90(), score, false)
     }
 
     error("Can't solve :(")
