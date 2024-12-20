@@ -1,13 +1,15 @@
 import kotlin.math.abs
 
 fun main() {
-    val testInput = readInput("Day20_test")
     val input = readInput("Day20")
 
-    check(part1(input) == 1490)
+    // Part 1
+    check(solve(map = input, cheatDuration =  2) == 1490)
+    // Part 2
+    solve(map = input, cheatDuration = 20).println()
 }
 
-private fun part1(map: Grid): Int {
+private fun solve(map: Grid, cheatDuration: Int): Int {
     val start = map.find('S')
     val end = map.find('E')
 
@@ -22,7 +24,7 @@ private fun part1(map: Grid): Int {
             val distance = manhattanDistance(path[i], path[j])
 
             // If the distance > threshold (which is the cheat duration), then shortcut is not possible.
-            if (distance > 2) return@count false
+            if (distance > cheatDuration) return@count false
 
             val savedTime = j - i - distance
 
