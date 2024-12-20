@@ -11,24 +11,24 @@ private fun part1(map: Grid): Int {
     val start = map.find('S')
     val end = map.find('E')
 
+    // Path is the list of all nodes visited from start to end.
     val path = findPath(map, start, end)
 
-    var count = 0
+    // Outer loop (i) iterates from first visited node until the penultimate (second to the last) node.
+    return (0 until path.lastIndex - 1).sumOf { i ->
+        // Inner loop (j) iterates from i + 1 node until the very last node in the path.
+        (i + 1 until path.size).count { j ->
+            // We calculate manhattan distance between nodes i and j.
+            val distance = manhattanDistance(path[i], path[j])
 
-    for (i in 0..<path.lastIndex - 1) {
-        for (j in i + 1..<path.size) {
-            val c1 = path[i]
-            val c2 = path[j]
-            val distance = manhattanDistance(c1, c2)
+            // If the distance > threshold (which is the cheat duration), then shortcut is not possible.
+            if (distance > 2) return@count false
 
+            val savedTime = j - i - distance
 
-            if (distance <= 2 && j - i - distance >= 100) {
-                count++
-            }
+            savedTime >= 100
         }
     }
-
-    return count
 }
 
 private fun findPath(map: Grid, start: Coordinate, end: Coordinate): List<Coordinate> {
