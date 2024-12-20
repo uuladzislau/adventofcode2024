@@ -4,7 +4,7 @@ fun main() {
     val input = readInput("Day20")
 
     // Part 1
-    check(solve(map = input, cheatDuration =  2) == 1490)
+    check(solve(map = input, cheatDuration = 2) == 1490)
     // Part 2
     check(solve(map = input, cheatDuration = 20) == 1011325)
 }
@@ -38,18 +38,8 @@ private fun findPath(map: Grid, start: Coordinate, end: Coordinate): List<Coordi
 
     val path = mutableListOf(loc)
 
-    val visited = mutableSetOf<Coordinate>()
-
     while (loc != end) {
-        visited += loc
-
-        val direction = Direction.entries.first {
-            val nextLoc = loc + it.offset
-            nextLoc !in visited && map[nextLoc] != '#'
-        }
-
-        loc += direction.offset
-
+        loc += Direction.entries.first { (loc + it.offset) !in path && map[loc + it.offset] != '#' }.offset
         path += loc
     }
 
