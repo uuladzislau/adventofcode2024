@@ -9,21 +9,17 @@ fun main() {
     check(part1(input) == 17005483322)
 }
 
-private fun part1(secretNumbers: List<Int>): Long = secretNumbers.map {
-    var secretNumber = it
-    repeat(2000, { secretNumber = nextSecretNumber(secretNumber) })
-    secretNumber.toLong()
-}.sum()
-
-private fun nextSecretNumber(initialSecretNumber: Int): Int {
-    val step1 = prune(mix(initialSecretNumber, initialSecretNumber * 64))
-
-    val step2: Int = prune(mix(step1, step1 / 32))
-
-    val step3 = prune(mix(step2, step2 * 2048))
-
-    return step3
+private fun part1(secretNumbers: List<Int>): Long = secretNumbers.sumOf {
+    generateSequence(it) { next -> nextSecretNumber(next) }
+        .drop(1)
+        .take(2000)
+        .last().toLong()
 }
+
+private fun nextSecretNumber(initialSecretNumber: Int): Int = initialSecretNumber
+        .let { prune(mix(it, it * 64)) }
+        .let { prune(mix(it, it / 32)) }
+        .let { prune(mix(it, it * 2048)) }
 
 private fun mix(secretNumber: Int, value: Int): Int = value xor secretNumber
 
